@@ -1,0 +1,11 @@
+{
+  "baseUrl": "http://localhost:3000/",
+  "testFiles": "*.spec.js",
+  "defaultCommandTimeout": 10000,
+  "integrationFolder": "cypress/integration",
+  "fixturesFolder": "cypress/fixtures",
+  "pluginsFile": "cypress/plugins",
+  "supportFile": "cypress/support",
+  "screenshotsFolder": "cypress/screenshots",
+  "videosFolder": "cypress/videos"
+}
