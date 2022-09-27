@@ -1,6 +1,6 @@
 <template>
   <Container>
-    <h1 data-test="title">
+    <h1>
       {{ title }}
     </h1>
   </Container>
