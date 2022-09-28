@@ -3,10 +3,11 @@ import { defineNuxtConfig } from 'nuxt'
 export default defineNuxtConfig({
   app: {
     head: {
-      title: 'Staky starter',
+      title: 'ICON DAOs',
       titleTemplate: '%s - Staky starter',
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { name: 'description', content: 'Meet the decentralized autonomous organizations of the ICON ecosystem! Anyone can submit his own DAO through a pull request.' },
       ],
     },
   },

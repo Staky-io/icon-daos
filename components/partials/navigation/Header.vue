@@ -32,8 +32,8 @@
 type Link = { text: string, url: string }
 
 const links = ref<Link[]>([
-  { text: 'ICON website', url: '' },
-  { text: 'ICON docs', url: '' },
-  { text: 'Why $ICX?', url: '' },
+  { text: 'ICON website', url: 'https://icon.community/' },
+  { text: 'ICON docs', url: 'https://docs.icon.community' },
+  { text: 'Why $ICX?', url: 'https://whyicx.com/' },
 ])
 </script>
