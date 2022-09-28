@@ -1,42 +1,35 @@
-# Nuxt 3 Minimal Starter
+# ICON DAOs references
 
-Look at the [nuxt 3 documentation](https://v3.nuxtjs.org) to learn more.
+In order to add a reference to your DAO, you need to create a **pull request** with a `.json` file in the `assets/data/` folder. You need to specify these data:
 
-## Setup
-
-Make sure to install the dependencies:
-
-```bash
-# yarn
-yarn install
-
-# npm
-npm install
-
-# pnpm
-pnpm install --shamefully-hoist
+```json
+{
+  "name": "My governance name",
+  "link": "https://my.governance/",
+  "logo": "https://my.logo/",
+  "socials": {
+    "discord": "https://discord.gg/_id",
+    "github": "https://github.com/_id",
+    "twitter": "https://twitter.com/_id",
+    "telegram": "https://t.me/_id",
+    "website": "https://my.website/"
+  }
+}
 ```
 
-## Development Server
-
-Start the development server on http://localhost:3000
-
-```bash
-npm run dev
+* The `name`, `link` and `logo` keys are **required**.
+* `Discord`, `GitHub`, `Twitter` and `Telegram` are the only supported social media.
+* You can also specify only the IDs:
+```json
+{
+  "socials": {
+    "discord": "_id",
+    "github": "_id",
+    "twitter": "_id",
+    "telegram": "_idd"
+  }
+}
 ```
 
-## Production
-
-Build the application for production:
-
-```bash
-npm run build
-```
-
-Locally preview production build:
-
-```bash
-npm run preview
-```
-
-Checkout the [deployment documentation](https://v3.nuxtjs.org/guide/deploy/presets) for more information.
+* Leave a blank if you don't want to specify one social media.
+* Create an **issue** to request more supported social media.
