@@ -4,11 +4,11 @@
     :class="$style.hero"
   >
     <PartialsNavigationHeader class="relative" />
-    <div class="grid place-items-center">
-      <h1 class="typo-title-l">
-        Autonomous organizations <span class="text-primary">of the ICON ecosystem</span>
+    <Container class="grid place-items-center">
+      <h1 class="typo-title-l text-center">
+        Meet the autonomous organizations <span class="text-primary">of the ICON ecosystem</span>
       </h1>
-    </div>
+    </Container>
   </div>
   <NuxtPage />
 </template>
