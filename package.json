@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "build": "NODE_ENV=production nuxt build",
-    "dev": "NODE_ENV=development nuxt dev",
+    "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "commit": "git add . && commit",

@@ -20,7 +20,7 @@
     </div>
     <div
       v-else
-      class="grid gap-20 s:grid-cols-2 m:grid-cols-3 l:grid-cols-4 xl:grid-cols-5 xxl:grid-cols-6"
+      class="grid gap-20 s:grid-cols-2 m:grid-cols-3 l:grid-cols-4 xl:grid-cols-4 xxl:grid-cols-4"
     >
       <DisplaysCardGovernance
         v-for="(governance, i) in governances"
