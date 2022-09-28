@@ -1,23 +1,39 @@
 <template>
-  <header class="sticky top-0 py-10 bg-white shadow">
+  <header class="grid items-center h-60">
     <Container class="grid gap-20 grid-flow-col items-center justify-between">
-      Header
       <div class="grid gap-10 grid-flow-col items-center">
-        <client-only>
-          <span v-if="isLoggedIn && address">{{ address }}</span>
-          <button @click="emit(events.POPUP_GUARD)">
-            {{ !isLoggedIn ? 'Log in' : 'Log out' }}
-          </button>
-        </client-only>
+        <div class="grid place-items-center w-20 h-20 rounded-full bg-white">
+          <UtilsIcon
+            name="Logo/Icon"
+            class="w-12 h-12 text-[#1BBDC2]"
+          />
+        </div>
+        <div class="text-14 font-bold">
+          ICON DAOs
+        </div>
+      </div>
+      <div class="grid gap-10 grid-flow-col items-center">
+        <a
+          v-for="(link, i) in links"
+          :key="`link-${i}`"
+          :href="link.url"
+          rel="nofollow noopener noreferrer"
+          target="_blank"
+          class="typo-button-l opacity-60 transition-opacity duration-100 hover:opacity-100"
+        >
+          {{ link.text }}
+        </a>
       </div>
     </Container>
   </header>
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { useUserStore } from '@/stores/user'
+type Link = { text: string, url: string }
 
-const { isLoggedIn, address } = storeToRefs(useUserStore())
-const { emit, events } = useEventsBus()
+const links = ref<Link[]>([
+  { text: 'ICON website', url: '' },
+  { text: 'ICON docs', url: '' },
+  { text: 'Why $ICX?', url: '' },
+])
 </script>

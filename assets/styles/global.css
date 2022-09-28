@@ -13,7 +13,7 @@ html {
 
 body {
   font-size: 1.6rem;
-  @apply font-inter;
+  @apply text-white font-inter bg-grey-400;
 }
 
 * {

@@ -1,11 +1,12 @@
 {
-  "name": "",
-  "link": "",
+  "name": "My governance name",
+  "link": "https://my.governance/",
+  "logo": "https://my.logo/",
   "socials": {
-    "discord": "",
-    "github": "",
-    "twitter": "",
-    "telegram": "",
-    "website": ""
+    "discord": "https://discord.gg/id",
+    "github": "https://github.com/id",
+    "twitter": "https://twitter.com/id",
+    "telegram": "https://t.me/id",
+    "website": "https://my.website/"
   }
 }
