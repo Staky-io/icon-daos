@@ -15,7 +15,7 @@
       >
         <a
           v-if="propsSocials.discord"
-          :href="getSocialUrl('discord.gg', propsSocials.discord)"
+          :href="getSocialUrl(['discord.gg', 'discord.com/invite'], propsSocials.discord)"
           rel="nofollow noopener noreferrer"
           target="_blank"
           class="grid place-items-center w-20 h-20 text-info"
@@ -27,7 +27,7 @@
         </a>
         <a
           v-if="propsSocials.github"
-          :href="getSocialUrl('discord.gg', propsSocials.github)"
+          :href="getSocialUrl('github.com', propsSocials.github)"
           rel="nofollow noopener noreferrer"
           target="_blank"
           class="grid place-items-center w-20 h-20 text-info"
@@ -104,5 +104,10 @@ const props = defineProps<Governance>()
 
 const propsSocials = computed<Governance['socials'] | null>(() => props.socials || null)
 
-const getSocialUrl = (pattern: string, social: string): string => (social.includes(pattern) ? social : `https://${pattern}/${social}`)
+const getSocialUrl = (pattern: string | string[], social: string): string => {
+  if (Array.isArray(pattern)) {
+    return pattern.find((checkedPattern) => social.includes(checkedPattern)) ? social : `https://${pattern[0]}/${social}`
+  }
+  return social.includes(pattern) ? social : `https://${pattern}/${social}`
+}
 </script>
