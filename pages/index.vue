@@ -7,6 +7,13 @@
       <h1 class="typo-title-l text-center">
         Meet the autonomous organizations <span class="text-primary">of the ICON ecosystem</span>
       </h1>
+      <a
+        :href="'/deploy'"
+        rel="nofollow noopener noreferrer"
+        class="grid place-items-center self-center px-40 w-120 h-40 typo-button-s rounded-50 border-1 border-grey-200 transition-border duration-100 hover:border-grey-100"
+      >
+        Launch your DAO
+      </a>
     </Container>
   </div>
   <Container class="my-40">

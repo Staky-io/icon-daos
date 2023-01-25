@@ -28,7 +28,7 @@
     v-model="models.token"
     label="Select token type"
     placeholder="Select a token"
-    :options="['Sould Bounds NFT', 'IRC2 token', 'Stakeable IRC2']"
+    :options="['Sould Bounds NFT']"
   />
   <ControlsButtonAction @click="onDeploy">
     Deploy token
@@ -40,7 +40,7 @@ const { emit, events } = useEventsBus()
 
 const models = reactive<{ token: string, address: string }>({ token: '', address: '' })
 
-const onDeploy = (): void => {
+const onDeployAgora = (): void => {
   emit(events.POPUP_ACTION, { name: 'CloseProposal', handleGuard: false, params: { uid: '0' } })
 }
 </script>

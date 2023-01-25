@@ -3,11 +3,11 @@
     <template #header>
       <h2>
         <client-only>
-          <template v-if="ACTION_SUBMITVOTE.tx.hash">
-            Your vote has been submitted!
+          <template v-if="ACTION_DEPLOYTOKEN.tx.hash">
+            The deployment has been canceled!
           </template>
-          <template v-else-if="ACTION_SUBMITVOTE.isLoading || ACTION_SUBMITVOTE.isWaiting">
-            Submitting...
+          <template v-else-if="ACTION_DEPLOYTOKEN.isLoading || ACTION_DEPLOYTOKEN.isWaiting">
+            Deploying...
           </template>
         </client-only>
       </h2>
@@ -19,12 +19,12 @@
       >
         <!-- SUCCESS -->
         <div
-          v-if="ACTION_SUBMITVOTE.tx.hash"
+          v-if="ACTION_DEPLOYTOKEN.tx.hash"
           key="success"
           class="grid gap-20 typo-paragraph"
         >
           <span>
-            Congratulations! The vote has been submitted.
+            The contract has been deployed : {{ ACTION_DEPLOYTOKEN.tx }}
           </span>
           <ControlsButtonAction @click="closePopup">
             Close
@@ -32,12 +32,12 @@
         </div>
         <!-- LOADING -->
         <div
-          v-else-if="ACTION_SUBMITVOTE.isLoading || ACTION_SUBMITVOTE.isWaiting"
+          v-else-if="ACTION_DEPLOYTOKEN.isLoading || ACTION_DEPLOYTOKEN.isWaiting"
           key="loading"
           class="grid gap-20 typo-paragraph"
         >
           <span>
-            Your vote is being submitted. Please wait for few seconds.
+            The contract is being deployed. Please wait for few seconds.
           </span>
         </div>
       </transition>
@@ -52,13 +52,13 @@ import type { BlockData } from '@/composables/useScoreService'
 import { useLedgerStore } from '@/stores/ledger'
 import { useProposalsStore } from '@/stores/proposals'
 import { useUserStore } from '@/stores/user'
+import soulbound from '~/static/contract_hash/soulbound'
 
 const { IconConverter, IconBuilder } = IconService
-const { CallTransactionBuilder } = IconBuilder
+const { DeployTransactionBuilder } = IconBuilder
 
 type Props = {
   uid: string
-  vote?: string
 }
 
 type ActionData = {
@@ -90,13 +90,12 @@ const { notify } = useNotificationToast()
 const { ICONEX_HANDLE_CANCEL } = useIconexListener()
 
 const { dipsatchLedger } = useLedgerStore()
-const { fetchProposal } = useProposalsStore()
 const { address, wallet } = storeToRefs(useUserStore())
 
-const nid = iconNetwork === 'testnet' ? '83' : '1'
-
+const nid = iconNetwork === 'testnet' ? '2' : '1'
+console.log(nid)
 const isGlobalListening = ref<boolean>(false)
-const ACTION_SUBMITVOTE = reactive<ActionData>({
+const ACTION_DEPLOYTOKEN = reactive<ActionData>({
   type: 'RPC',
   tx: {},
   query: {},
@@ -106,30 +105,18 @@ const ACTION_SUBMITVOTE = reactive<ActionData>({
   isSuccess: false,
 })
 
-const paramsState = {
-  _proposalId: props.uid,
-  _vote: props.vote,
-}
-
-const getSubmitVoteQuery = async (): Promise<Query> => {
+const getDeployQuery = async (): Promise<Query> => {
   try {
-    const stepLimit = await getStepLimit(
-      address.value,
-      'vote',
-      scoreAddress,
-      paramsState,
-    )
-
-    const tx = new CallTransactionBuilder()
+    const tx = new DeployTransactionBuilder()
       .from(address.value)
-      .to(scoreAddress)
-      .stepLimit(stepLimit)
+      .to('cx0000000000000000000000000000000000000000')
+      .stepLimit(IconConverter.toBigNumber('3000000000'))
       .nid(IconConverter.toBigNumber(nid))
       .nonce(IconConverter.toBigNumber('1'))
       .version(IconConverter.toBigNumber('3'))
       .timestamp((new Date()).getTime() * 1000)
-      .method('vote')
-      .params(paramsState)
+      .contentType('application/java')
+      .content(soulbound)
       .build()
 
     return {
@@ -148,7 +135,7 @@ const getSubmitVoteQuery = async (): Promise<Query> => {
   }
 }
 
-const makeSubmitVoteQuery = async (hash: string): Promise<{ block: BlockData, tx: { txHash: string } }> => new Promise((resolve, reject) => {
+const makeDeployQuery = async (hash: string): Promise<{ block: BlockData, tx: { txHash: string } }> => new Promise((resolve, reject) => {
   getTxResult(hash)
     .then((tx) => {
       if (tx.status === 1) {
@@ -162,34 +149,30 @@ const makeSubmitVoteQuery = async (hash: string): Promise<{ block: BlockData, tx
     })
     .catch(() => {
       setTimeout(() => {
-        resolve(makeSubmitVoteQuery(hash))
+        resolve(makeDeployQuery(hash))
       }, 2000)
     })
 })
 
-const RESET_SUBMITVOTE = (): void => {
-  ACTION_SUBMITVOTE.tx = {}
-  ACTION_SUBMITVOTE.query = {}
-  ACTION_SUBMITVOTE.isListening = false
-  ACTION_SUBMITVOTE.isWaiting = false
-  ACTION_SUBMITVOTE.isLoading = false
-  ACTION_SUBMITVOTE.isSuccess = false
+const RESET_DEPLOY = (): void => {
+  ACTION_DEPLOYTOKEN.tx = {}
+  ACTION_DEPLOYTOKEN.query = {}
+  ACTION_DEPLOYTOKEN.isListening = false
+  ACTION_DEPLOYTOKEN.isWaiting = false
+  ACTION_DEPLOYTOKEN.isLoading = false
+  ACTION_DEPLOYTOKEN.isSuccess = false
 }
 
 const RESET_LISTENER = (): void => {
   isGlobalListening.value = false
-  RESET_SUBMITVOTE()
+  RESET_DEPLOY()
 }
 
-const CALLBACK_SUBMITVOTE = async (hash: string): void => {
+const CALLBACK_DEPLOY = async (hash: string): Promise<void> => {
   try {
-    RESET_SUBMITVOTE()
-    ACTION_SUBMITVOTE.tx = { hash }
-    ACTION_SUBMITVOTE.isSuccess = true
-
-    if (typeof uid === 'string') {
-      await fetchProposal(uid)
-    }
+    RESET_DEPLOY()
+    ACTION_DEPLOYTOKEN.tx = { hash }
+    ACTION_DEPLOYTOKEN.isSuccess = true
   } catch (error) {
     notify.error({
       title: 'Error',
@@ -199,14 +182,14 @@ const CALLBACK_SUBMITVOTE = async (hash: string): void => {
   }
 }
 
-const COMPLETE_SUBMITVOTE = async (hash: string): Promise<void> => {
+const COMPLETE_DEPLOY = async (hash: string): Promise<void> => {
   try {
-    ACTION_SUBMITVOTE.isWaiting = false
-    ACTION_SUBMITVOTE.isLoading = true
-    const { tx } = await makeSubmitVoteQuery(hash)
-    CALLBACK_SUBMITVOTE(tx.txHash)
+    ACTION_DEPLOYTOKEN.isWaiting = false
+    ACTION_DEPLOYTOKEN.isLoading = true
+    const { tx } = await makeDeployQuery(hash)
+    CALLBACK_DEPLOY(tx.txHash)
   } catch (error) {
-    RESET_SUBMITVOTE()
+    RESET_DEPLOY()
 
     notify.error({
       title: 'Error',
@@ -228,9 +211,9 @@ const HANDLE_RPC = async (payload): Promise<void> => {
     })
   } else if (result) {
     isGlobalListening.value = false
-    if (ACTION_SUBMITVOTE.type === 'RPC' && ACTION_SUBMITVOTE.isListening) {
-      ACTION_SUBMITVOTE.isListening = false
-      await COMPLETE_SUBMITVOTE(result)
+    if (ACTION_DEPLOYTOKEN.type === 'RPC' && ACTION_DEPLOYTOKEN.isListening) {
+      ACTION_DEPLOYTOKEN.isListening = false
+      await COMPLETE_DEPLOY(result)
     }
   }
 }
@@ -274,24 +257,26 @@ const TX_ROUTER = async ({ type, payload }: { type: string, payload: Query }): P
   }
 }
 
-const DISPATCH_SUBMITVOTE = async (): Promise<void> => {
-  ACTION_SUBMITVOTE.query = {
+const DISPATCH_DEPLOY = async (): Promise<void> => {
+  ACTION_DEPLOYTOKEN.query = {
     address: address.value,
     score: scoreAddress,
-    params: paramsState,
   }
 
-  const query = await getSubmitVoteQuery()
+  const query = await getDeployQuery()
 
   isGlobalListening.value = true
-  ACTION_SUBMITVOTE.isWaiting = true
-  ACTION_SUBMITVOTE.isListening = true
+  ACTION_DEPLOYTOKEN.isWaiting = true
+  ACTION_DEPLOYTOKEN.isListening = true
 
   TX_ROUTER({ type: 'REQUEST_JSON-RPC', payload: query })
 }
 
 const closePopup = (): void => {
-  RESET_SUBMITVOTE()
+  if (ACTION_DEPLOYTOKEN.isSuccess) {
+    navigateTo('/')
+  }
+  RESET_DEPLOY()
   emit(events.POPUP_CLOSE)
 }
 
@@ -303,6 +288,6 @@ watch(() => bus.value.get(events.ICONEX_CANCEL), () => {
 watch(() => bus.value.get(events.ICONEX_RPC), HANDLE_RPC)
 
 onMounted(async () => {
-  await DISPATCH_SUBMITVOTE()
+  await DISPATCH_DEPLOY()
 })
 </script>

@@ -3,7 +3,7 @@
     <h1 class="typo-title-l text-white">
       Get your DAO started
     </h1>
-    <p class="typo-text-medium text-grey-100">
+    <p class="typo-text-large text-grey-100">
       This page allows you to deploy the contracts required to launch a token based DAO on the ICON network. Do you have a token ready for your governance?
     </p>
   </div>
