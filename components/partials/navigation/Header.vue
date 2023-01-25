@@ -1,7 +1,7 @@
 <template>
-  <header class="grid items-center h-60">
+  <header class="fixed top-0 z-100 grid items-center w-full h-60 pointer-events-none">
     <Container class="grid gap-20 grid-flow-col items-center justify-between">
-      <div class="grid gap-10 grid-flow-col items-center">
+      <div class="grid gap-10 grid-flow-col items-center pointer-events-auto">
         <div class="grid place-items-center w-20 h-20 rounded-full bg-white">
           <UtilsIcon
             name="Logo/Icon"
@@ -12,7 +12,7 @@
           ICON DAOs
         </div>
       </div>
-      <div class="grid gap-10 grid-flow-col items-center">
+      <div class="grid gap-10 grid-flow-col items-center pointer-events-auto">
         <a
           v-for="(link, i) in links"
           :key="`link-${i}`"

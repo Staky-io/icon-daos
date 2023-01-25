@@ -5,6 +5,8 @@ const icons = {
   'Logo/Telegram': markRaw(defineAsyncComponent(() => import('@/assets/scripts/icons/Logo/Telegram.vue'))),
   'Logo/Twitter': markRaw(defineAsyncComponent(() => import('@/assets/scripts/icons/Logo/Twitter.vue'))),
   'Logo/Website': markRaw(defineAsyncComponent(() => import('@/assets/scripts/icons/Logo/Website.vue'))),
+  Chevron: markRaw(defineAsyncComponent(() => import('@/assets/scripts/icons/Chevron.vue'))),
+  Cross: markRaw(defineAsyncComponent(() => import('@/assets/scripts/icons/Cross.vue'))),
 }
 
 export type IconsNames = keyof typeof icons

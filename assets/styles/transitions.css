@@ -29,6 +29,22 @@
 }
 
 /**
+ * fade-up
+ */
+.fade-up-enter-active,
+.fade-up-leave-active {
+  transition-timing-function: cubic-bezier(.5, 0, 0, 1);
+  transition-duration: 250ms;
+  transition-property: opacity, transform;
+}
+
+.fade-up-enter-from,
+.fade-up-leave-to {
+  transform: translateY(10px);
+  opacity: 0;
+}
+
+/**
  * fade-bounce
  */
 .fade-bounce-enter-active,
