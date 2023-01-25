@@ -1,31 +1,60 @@
 <template>
-  <div
-    class="relative grid grid-rows-auto-1fr before:content-[''] before:absolute before:left-0 before:top-0 before:right-0 before:bottom-0 before:pointer-events-none"
-    :class="$style.hero"
-  >
-    <PartialsNavigationHeader class="relative" />
-    <Container class="grid place-items-center">
-      <h1 class="typo-title-l text-center">
-        Meet the autonomous organizations <span class="text-primary">of the ICON ecosystem</span>
-      </h1>
-    </Container>
-  </div>
-  <NuxtPage />
+  <UtilsNotificationBanner
+    v-if="notificationsBanner"
+    v-bind="notificationsBanner"
+  />
+  <PartialsNavigationHeader />
+  <client-only>
+    <NuxtPage />
+  </client-only>
+  <div id="root" />
+  <transition name="fade">
+    <UtilsOverlay v-if="!!currentPopup.component" />
+  </transition>
+  <transition name="popup-bounce">
+    <component
+      :is="currentPopup.component"
+      v-if="!!currentPopup.component"
+      v-bind="currentPopup.params"
+      v-on="currentPopup.events"
+    />
+  </transition>
+  <UtilsNotificationToast
+    v-for="(notificationToast, i) in notificationsToast"
+    :key="`notificationToast-${i}`"
+    v-bind="notificationToast"
+  />
 </template>
 
 <script setup lang="ts">
+import type { NotificationBannerProps } from '@/composables/useNotificationBanner'
+import type { NotificationToastProps } from '@/composables/useNotificationToast'
+import { useDeviceStore } from '@/stores/device'
+import BrowserDetector from '@/assets/scripts/detectors/BrowserDetector.class'
+import DeviceDetector from '@/assets/scripts/detectors/DeviceDetector.class'
+
+const { setBrowser, setDevice } = useDeviceStore()
+const { bus, events } = useEventsBus()
+const { listenIconex } = useIconexListener()
+const {
+  currentPopup,
+  POPUP_CLOSE_CURRENT,
+  POPUP_HANDLE_GUARD,
+  POPUP_CALL_ACTION,
+} = usePopupMethods()
+
+const notificationsBanner = useState<NotificationBannerProps>('notifications-banner', () => null)
+const notificationsToast = useState<NotificationToastProps[]>('notifications-toast', () => [])
+
+watch(() => bus.value.get(events.POPUP_CLOSE), POPUP_CLOSE_CURRENT)
+watch(() => bus.value.get(events.POPUP_GUARD), POPUP_HANDLE_GUARD)
+watch(() => bus.value.get(events.POPUP_ACTION), POPUP_CALL_ACTION)
+
+onBeforeMount(() => {
+  const { browser } = new BrowserDetector()
+  const checks = new DeviceDetector()
+  setBrowser(browser.toLowerCase())
+  setDevice(checks)
+  listenIconex()
+})
 </script>
-
-<style lang="scss" module>
-.hero {
-  height: 210px;
-  background: radial-gradient(ellipse at -50px -75px, #0890FE, #231A3B 75%);
-
-  &::before {
-    background-image: url("~/assets/images/waves.svg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: cover;
-  }
-}
-</style>
