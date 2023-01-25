@@ -25,6 +25,7 @@ module.exports = {
     'no-debugger': isProduction ? 'error' : 'warn',
     'no-undef': 0,
     'no-multiple-empty-lines': ['error', { max: 1, maxBOF: 1 }],
+    'no-underscore-dangle': 'off',
     'no-param-reassign': 'off',
     'no-plusplus': 'off',
     'no-shadow': 'off',

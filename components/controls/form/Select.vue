@@ -28,7 +28,7 @@
     >
       {{ model || placeholder }}
       <UtilsIcon
-        name="Chevron"
+        name="Chevron/Down"
         class="w-20 h-20 text-[#A1A4AC]"
       />
     </button>
