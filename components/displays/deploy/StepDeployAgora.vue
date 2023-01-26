@@ -3,11 +3,11 @@
     <h1 class="typo-title-l text-white">
       Deploy Agora
     </h1>
-    <p class="typo-text-medium text-grey-100">
-      The next step is to deploy Agora, the governance framework for you DAO
+    <p class="typo-text-large text-grey-100">
+      The next step is to deploy Agora, the governance framework for you DAO.
     </p>
   </div>
-  <ControlsButtonAction>
+  <ControlsButtonAction @click="onDeployAgora">
     Deploy Agora
   </ControlsButtonAction>
   <div class="w-full h-1 bg-grey-200" />
@@ -15,32 +15,61 @@
     <h1 class="typo-title-l text-white">
       Setup Agora contracts
     </h1>
-    <p class="typo-text-medium text-grey-100">
-      The next step is to deploy Agora, the governance framework for you DAO
+    <p class="typo-text-large text-grey-100">
+      Once Agora is deployed, you can set it to track balances from your token contract. <span v-if="models.token == 'Sould Bounds NFT'">For a Soulbound NFT, you will need to specify the tokenId of the token that holds governance power.</span>
     </p>
   </div>
-  <ControlsFormInput
-    v-model="models.address"
-    label="Address"
-    placeholder="cx..."
-  />
   <ControlsFormSelect
     v-model="models.token"
     label="Select token type"
     placeholder="Select a token"
     :options="['Sould Bounds NFT']"
   />
-  <ControlsButtonAction @click="onDeploy">
-    Deploy token
+  <div class="grid s:grid-cols-2 gap-16">
+    <ControlsFormInput
+      v-model="models.address"
+      label="Address"
+      placeholder="cx..."
+    />
+    <ControlsFormInput
+      v-if="models.token == 'Sould Bounds NFT'"
+      v-model="models.id"
+      label="Id"
+      placeholder="1"
+    />
+  </div>
+
+  <ControlsButtonAction @click="onSet">
+    Set Agora
   </ControlsButtonAction>
 </template>
 
 <script setup lang="ts">
+const { notify } = useNotificationToast()
 const { emit, events } = useEventsBus()
-
-const models = reactive<{ token: string, address: string }>({ token: '', address: '' })
+type Emits = {
+  (event: 'updateStep', parameter: NextStep): void
+}
+const emitStep = defineEmits<Emits>()
 
 const onDeployAgora = (): void => {
-  emit(events.POPUP_ACTION, { name: 'CloseProposal', handleGuard: false, params: { uid: '0' } })
+  emit(events.POPUP_ACTION, { name: 'Deploy', params: { type: 'agora' }, handleGuard: true })
 }
+
+const onSetupAgora = (): void => {
+  if (models.token !== '') {
+    // emit(events.POPUP_ACTION, { name: 'Deploy', params: { type: 'agora' }, handleGuard: true })
+  } else {
+    notify.error({
+      title: 'Warning',
+      message: 'You need to select a token type, address',
+      timeout: 5000,
+    })
+  }
+}
+
+const onCloseAgora = (): void => {
+  emitStep(events.POPUP_ACTION, { name: 'CloseProposal', handleGuard: false, params: { uid: '0' } })
+}
+const models = reactive<{ token: string, address: string, id: string }>({ token: '', address: '', id: '' })
 </script>

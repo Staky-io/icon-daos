@@ -4,7 +4,7 @@
       <h2>
         <client-only>
           <template v-if="ACTION_DEPLOYTOKEN.tx.hash">
-            The deployment has been canceled!
+            Your contract have been deployed!
           </template>
           <template v-else-if="ACTION_DEPLOYTOKEN.isLoading || ACTION_DEPLOYTOKEN.isWaiting">
             Deploying...
@@ -24,10 +24,11 @@
           class="grid gap-20 typo-paragraph"
         >
           <span>
-            The contract has been deployed : {{ ACTION_DEPLOYTOKEN.tx }}
+            The contract has been deployed at this address : {{ ACTION_DEPLOYTOKEN.tx.scoreAddress }}
+
           </span>
           <ControlsButtonAction @click="closePopup">
-            Close
+            Next
           </ControlsButtonAction>
         </div>
         <!-- LOADING -->
@@ -53,13 +54,10 @@ import { useLedgerStore } from '@/stores/ledger'
 import { useProposalsStore } from '@/stores/proposals'
 import { useUserStore } from '@/stores/user'
 import soulbound from '~/static/contract_hash/soulbound'
+import agora from '~/static/contract_hash/agora'
 
 const { IconConverter, IconBuilder } = IconService
 const { DeployTransactionBuilder } = IconBuilder
-
-type Props = {
-  uid: string
-}
 
 type ActionData = {
   type: string
@@ -78,9 +76,7 @@ type Query = {
   id: number
 }
 
-const props = defineProps<Props>()
-
-const { iconNetwork, scoreAddress } = useRuntimeConfig()
+const { iconNetwork } = useRuntimeConfig()
 const route = useRoute()
 const uid = route?.params?.uid
 
@@ -93,7 +89,12 @@ const { dipsatchLedger } = useLedgerStore()
 const { address, wallet } = storeToRefs(useUserStore())
 
 const nid = iconNetwork === 'testnet' ? '2' : '1'
-console.log(nid)
+type Props = {
+  type: string
+}
+
+const props = defineProps<Props>()
+
 const isGlobalListening = ref<boolean>(false)
 const ACTION_DEPLOYTOKEN = reactive<ActionData>({
   type: 'RPC',
@@ -104,6 +105,14 @@ const ACTION_DEPLOYTOKEN = reactive<ActionData>({
   isLoading: false,
   isSuccess: false,
 })
+
+let content
+
+if (props.type === 'soulbound') {
+  content = soulbound
+} else if (props.type === '') {
+  content = agora
+}
 
 const getDeployQuery = async (): Promise<Query> => {
   try {
@@ -116,7 +125,7 @@ const getDeployQuery = async (): Promise<Query> => {
       .version(IconConverter.toBigNumber('3'))
       .timestamp((new Date()).getTime() * 1000)
       .contentType('application/java')
-      .content(soulbound)
+      .content(content)
       .build()
 
     return {
@@ -135,10 +144,11 @@ const getDeployQuery = async (): Promise<Query> => {
   }
 }
 
-const makeDeployQuery = async (hash: string): Promise<{ block: BlockData, tx: { txHash: string } }> => new Promise((resolve, reject) => {
+const makeDeployQuery = async (hash: string): Promise<{ block: BlockData, tx: { txHash: string, scoreAddress: string } }> => new Promise((resolve, reject) => {
   getTxResult(hash)
     .then((tx) => {
       if (tx.status === 1) {
+        console.log(tx)
         getBlockData(tx.blockHash)
           .then((block) => {
             resolve({ block, tx })
@@ -168,10 +178,10 @@ const RESET_LISTENER = (): void => {
   RESET_DEPLOY()
 }
 
-const CALLBACK_DEPLOY = async (hash: string): Promise<void> => {
+const CALLBACK_DEPLOY = async (hash: string, scoreAddress:string): Promise<void> => {
   try {
     RESET_DEPLOY()
-    ACTION_DEPLOYTOKEN.tx = { hash }
+    ACTION_DEPLOYTOKEN.tx = { hash, scoreAddress }
     ACTION_DEPLOYTOKEN.isSuccess = true
   } catch (error) {
     notify.error({
@@ -187,7 +197,7 @@ const COMPLETE_DEPLOY = async (hash: string): Promise<void> => {
     ACTION_DEPLOYTOKEN.isWaiting = false
     ACTION_DEPLOYTOKEN.isLoading = true
     const { tx } = await makeDeployQuery(hash)
-    CALLBACK_DEPLOY(tx.txHash)
+    CALLBACK_DEPLOY(tx.txHash, tx.scoreAddress)
   } catch (error) {
     RESET_DEPLOY()
 
@@ -260,7 +270,6 @@ const TX_ROUTER = async ({ type, payload }: { type: string, payload: Query }): P
 const DISPATCH_DEPLOY = async (): Promise<void> => {
   ACTION_DEPLOYTOKEN.query = {
     address: address.value,
-    score: scoreAddress,
   }
 
   const query = await getDeployQuery()
@@ -272,12 +281,11 @@ const DISPATCH_DEPLOY = async (): Promise<void> => {
   TX_ROUTER({ type: 'REQUEST_JSON-RPC', payload: query })
 }
 
+// const emitStep = defineEmits<Emits>()
+
 const closePopup = (): void => {
-  if (ACTION_DEPLOYTOKEN.isSuccess) {
-    navigateTo('/')
-  }
   RESET_DEPLOY()
-  emit(events.POPUP_CLOSE)
+  // emitStep('updateStep', 'StepDeployAgora')
 }
 
 watch(() => bus.value.get(events.ICONEX_CANCEL), () => {

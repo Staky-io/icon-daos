@@ -30,7 +30,7 @@
       placeholder="Total supply"
     />
   </div> -->
-  <ControlsButtonAction @click="onDeployAgora">
+  <ControlsButtonAction @click="onDeployToken">
     Deploy token
   </ControlsButtonAction>
 </template>
@@ -42,16 +42,16 @@ type Emits = {
   (event: 'updateStep', parameter: NextStep): void
 }
 const { emit, events } = useEventsBus()
+const { notify } = useNotificationToast()
+const emitStep = defineEmits<Emits>()
 
-// const emit = defineEmits<Emits>()
-
-const onDeployAgora = (): void => {
+const onDeployToken = (): void => {
   if (models.token !== '') {
-    emit(events.POPUP_ACTION, { name: 'Deploy', handleGuard: true })
+    emit(events.POPUP_ACTION, { name: 'Deploy', params: { type: 'soulbound' }, handleGuard: true })
   } else {
-    notify.warning({
+    notify.error({
       title: 'Warning',
-      message: 'You need to select a token',
+      message: 'You need to select a token type',
       timeout: 5000,
     })
   }
