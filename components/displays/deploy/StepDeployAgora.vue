@@ -28,7 +28,7 @@
   <div class="grid s:grid-cols-2 gap-16">
     <ControlsFormInput
       v-model="models.address"
-      label="Address"
+      label="Token address"
       placeholder="cx..."
     />
     <ControlsFormInput
