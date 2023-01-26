@@ -45,9 +45,18 @@ const { emit, events } = useEventsBus()
 const { notify } = useNotificationToast()
 const emitStep = defineEmits<Emits>()
 
+const models = reactive<{ token: string, name: string, supply: string }>({ token: '' })
+
 const onDeployToken = (): void => {
   if (models.token !== '') {
-    emit(events.POPUP_ACTION, { name: 'Deploy', params: { type: 'soulbound' }, handleGuard: true })
+    emit(events.POPUP_ACTION, {
+      name: 'Deploy',
+      params: { type: 'soulbound' },
+      handleGuard: true,
+      callback: (returnData) => {
+        console.log(returnData)
+      },
+    })
   } else {
     notify.error({
       title: 'Warning',
@@ -56,5 +65,4 @@ const onDeployToken = (): void => {
     })
   }
 }
-const models = reactive<{ token: string, name: string, supply: string }>({ token: '' })
 </script>

@@ -17,6 +17,7 @@ export enum EVENTS_NAMES {
 }
 
 type CloseParams = {
+  returnData?: any
   handlePending?: boolean
 }
 
@@ -42,7 +43,7 @@ export const usePopupMethods = () => {
   const [currentPopup, setCurrentPopup] = usePopupData()
   const [pendingPopup, setPendingPopup] = usePopupData()
 
-  const POPUP_CLOSE_CURRENT = ({ handlePending = false }: CloseParams = {}): void => {
+  const POPUP_CLOSE_CURRENT = ({ handlePending = false, returnData }: CloseParams = {}): void => {
     if (!pendingPopup.component || !handlePending) {
       setCurrentPopup()
     } else {
@@ -50,7 +51,7 @@ export const usePopupMethods = () => {
       setCurrentPopup({ ...rest })
       setPendingPopup()
       if (callback) {
-        callback(rest.params)
+        callback(returnData, rest.params)
       }
     }
   }

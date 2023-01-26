@@ -51,7 +51,6 @@ import IconService from 'icon-sdk-js'
 import { storeToRefs } from 'pinia'
 import type { BlockData } from '@/composables/useScoreService'
 import { useLedgerStore } from '@/stores/ledger'
-import { useProposalsStore } from '@/stores/proposals'
 import { useUserStore } from '@/stores/user'
 import soulbound from '~/static/contract_hash/soulbound'
 import agora from '~/static/contract_hash/agora'
@@ -144,7 +143,7 @@ const getDeployQuery = async (): Promise<Query> => {
   }
 }
 
-const makeDeployQuery = async (hash: string): Promise<{ block: BlockData, tx: { txHash: string, scoreAddress: string } }> => new Promise((resolve, reject) => {
+const makeDeployQuery = async (hash: string): Promise<{ block: BlockData, tx: Awaited<ReturnType<typeof getTxResult>> }> => new Promise((resolve, reject) => {
   getTxResult(hash)
     .then((tx) => {
       if (tx.status === 1) {
@@ -178,7 +177,7 @@ const RESET_LISTENER = (): void => {
   RESET_DEPLOY()
 }
 
-const CALLBACK_DEPLOY = async (hash: string, scoreAddress:string): Promise<void> => {
+const CALLBACK_DEPLOY = async (hash: string, scoreAddress: string): Promise<void> => {
   try {
     RESET_DEPLOY()
     ACTION_DEPLOYTOKEN.tx = { hash, scoreAddress }
@@ -281,11 +280,9 @@ const DISPATCH_DEPLOY = async (): Promise<void> => {
   TX_ROUTER({ type: 'REQUEST_JSON-RPC', payload: query })
 }
 
-// const emitStep = defineEmits<Emits>()
-
 const closePopup = (): void => {
   RESET_DEPLOY()
-  // emitStep('updateStep', 'StepDeployAgora')
+  emit(events.POPUP_CLOSE, { returnData: ACTION_DEPLOYTOKEN.tx })
 }
 
 watch(() => bus.value.get(events.ICONEX_CANCEL), () => {
