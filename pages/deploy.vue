@@ -3,6 +3,7 @@
     <div class="grid gap-24 m:w-768">
       <component
         :is="steps[currentStep]"
+        :step-data="stepData"
         @updateStep="updateStep"
       />
     </div>
@@ -23,8 +24,10 @@ const steps = {
 }
 
 const currentStep = ref<STEPS>(STEPS.DECLARE_TOKEN)
+const stepData = ref<string>('')
 
-const updateStep = (step: STEPS): void => {
+const updateStep = ({ step, data }): void => {
   currentStep.value = step
+  stepData.value = data
 }
 </script>

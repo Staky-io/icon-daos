@@ -182,7 +182,7 @@ const CALLBACK_DEPLOY = async (hash: string, scoreAddress: string): Promise<void
     RESET_DEPLOY()
     ACTION_DEPLOYTOKEN.tx = { hash, scoreAddress }
     ACTION_DEPLOYTOKEN.isSuccess = true
-    //
+    // scoreAddress
   } catch (error) {
     notify.error({
       title: 'Error',

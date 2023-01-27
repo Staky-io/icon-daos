@@ -39,7 +39,7 @@
 type NextStep = 'StepDeployAgora'
 
 type Emits = {
-  (event: 'updateStep', parameter: NextStep): void
+  (event: 'updateStep', parameter: {step:NextStep, data:string}): void
 }
 const { emit, events } = useEventsBus()
 const { notify } = useNotificationToast()
@@ -55,6 +55,8 @@ const onDeployToken = (): void => {
       handleGuard: true,
       callback: (returnData) => {
         console.log(returnData)
+        console.log(returnData.scoreAddress)
+        emitStep('updateStep', { step: 'StepDeployAgora', data: returnData.scoreAddress })
       },
     })
   } else {

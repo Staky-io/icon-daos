@@ -46,9 +46,14 @@
 
 <script setup lang="ts">
 const { notify } = useNotificationToast()
+type Props = {
+  stepData?: string
+}
+
+const props = defineProps<Props>()
 const { emit, events } = useEventsBus()
 type Emits = {
-  (event: 'updateStep', parameter: NextStep): void
+  (event: 'updateStep', parameter: {step:NextStep, data:string}): void
 }
 const emitStep = defineEmits<Emits>()
 
@@ -69,7 +74,8 @@ const onSetupAgora = (): void => {
 }
 
 const onCloseAgora = (): void => {
-  emitStep(events.POPUP_ACTION, { name: 'CloseProposal', handleGuard: false, params: { uid: '0' } })
+  emit(events.POPUP_ACTION, { name: 'CloseProposal', handleGuard: false, params: { uid: '0' } })
 }
 const models = reactive<{ token: string, address: string, id: string }>({ token: '', address: '', id: '' })
+if (props.stepData) models.token = props.stepData
 </script>
