@@ -39,7 +39,7 @@
     />
   </div>
 
-  <ControlsButtonAction @click="onSet">
+  <ControlsButtonAction @click="onSetupAgora">
     Set Agora
   </ControlsButtonAction>
 </template>
@@ -52,18 +52,17 @@ type Props = {
 
 const props = defineProps<Props>()
 const { emit, events } = useEventsBus()
-type Emits = {
-  (event: 'updateStep', parameter: {step:NextStep, data:string}): void
-}
-const emitStep = defineEmits<Emits>()
+
+const models = reactive<{ token: string, address: string, id: string }>({ token: '', address: '', id: '' })
+if (props.stepData) models.token = props.stepData
 
 const onDeployAgora = (): void => {
-  emit(events.POPUP_ACTION, { name: 'Deploy', params: { type: 'agora' }, handleGuard: true })
+  emit(events.POPUP_ACTION, { name: 'DeployToken', params: { type: 'agora' }, handleGuard: true })
 }
 
 const onSetupAgora = (): void => {
   if (models.token !== '') {
-    // emit(events.POPUP_ACTION, { name: 'Deploy', params: { type: 'agora' }, handleGuard: true })
+    // emit(events.POPUP_ACTION, { name: 'DeployToken', params: { type: 'agora' }, handleGuard: true })
   } else {
     notify.error({
       title: 'Warning',
@@ -72,10 +71,4 @@ const onSetupAgora = (): void => {
     })
   }
 }
-
-const onCloseAgora = (): void => {
-  emit(events.POPUP_ACTION, { name: 'CloseProposal', handleGuard: false, params: { uid: '0' } })
-}
-const models = reactive<{ token: string, address: string, id: string }>({ token: '', address: '', id: '' })
-if (props.stepData) models.token = props.stepData
 </script>

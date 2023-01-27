@@ -10,13 +10,13 @@
   <div class="grid m:grid-cols-2 gap-16">
     <ControlsButtonAction
       version="secondary"
-      @click="emit('updateStep', {step:'StepDeployToken'})"
+      @click="emit('updateStep', { step: 'StepDeployToken' })"
     >
       I don't have a token contract
     </ControlsButtonAction>
     <ControlsButtonAction
       version="secondary"
-      @click="emit('updateStep', {step:'StepDeployAgora'})"
+      @click="emit('updateStep', { step: 'StepDeployAgora' })"
     >
       I have a token ready
     </ControlsButtonAction>
@@ -27,7 +27,7 @@
 type NextStep = 'StepDeployToken' | 'StepDeployAgora'
 
 type Emits = {
-  (event: 'updateStep', parameter: {step:NextStep}): void
+  (event: 'updateStep', parameter: { step: NextStep }): void
 }
 
 const emit = defineEmits<Emits>()

@@ -26,7 +26,7 @@ const steps = {
 const currentStep = ref<STEPS>(STEPS.DECLARE_TOKEN)
 const stepData = ref<string>('')
 
-const updateStep = ({ step, data }): void => {
+const updateStep = ({ step, data }: { step: STEPS, data: string }): void => {
   currentStep.value = step
   stepData.value = data
 }

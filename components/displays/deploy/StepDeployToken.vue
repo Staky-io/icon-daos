@@ -13,11 +13,9 @@
     placeholder="Select a token"
     :options="['Sould Bounds NFT']"
   />
-  <div>
-    <span v-if="models.token == 'Sould Bounds NFT'">
-      SoulBounds NFT are untransferable NFT tokens. Soulbound tokens cannot be bought and sold and are not designed to have market value. Instead, they can be issued by individuals or by another entity to symbolize an accomplishment.
-    </span>
-  </div>
+  <span v-if="models.token == 'Sould Bounds NFT'">
+    SoulBounds NFT are untransferable NFT tokens. Soulbound tokens cannot be bought and sold and are not designed to have market value. Instead, they can be issued by individuals or by another entity to symbolize an accomplishment.
+  </span>
   <!-- <div class="grid s:grid-cols-2 gap-16">
     <ControlsFormInput
       v-model="models.name"
@@ -39,18 +37,18 @@
 type NextStep = 'StepDeployAgora'
 
 type Emits = {
-  (event: 'updateStep', parameter: {step:NextStep, data:string}): void
+  (event: 'updateStep', parameter: { step: NextStep, data: string }): void
 }
 const { emit, events } = useEventsBus()
 const { notify } = useNotificationToast()
 const emitStep = defineEmits<Emits>()
 
-const models = reactive<{ token: string, name: string, supply: string }>({ token: '' })
+const models = reactive<{ token: string }>({ token: '' })
 
 const onDeployToken = (): void => {
   if (models.token !== '') {
     emit(events.POPUP_ACTION, {
-      name: 'Deploy',
+      name: 'DeployToken',
       params: { type: 'soulbound' },
       handleGuard: true,
       callback: (returnData) => {
