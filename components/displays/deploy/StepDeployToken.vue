@@ -51,9 +51,7 @@ const onDeployToken = (): void => {
       name: 'DeployToken',
       params: { type: 'soulbound' },
       handleGuard: true,
-      callback: (returnData) => {
-        console.log(returnData)
-        console.log(returnData.scoreAddress)
+      onClose: (returnData) => {
         emitStep('updateStep', { step: 'StepDeployAgora', data: returnData.scoreAddress })
       },
     })

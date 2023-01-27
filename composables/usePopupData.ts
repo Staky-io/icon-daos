@@ -3,6 +3,7 @@ type PopupStructure = {
   params?: object
   events?: object
   callback?: ((...args: unknown[]) => void) | null
+  onClose?: ((...args: unknown[]) => void) | null
 }
 
 const basePopupData: PopupStructure = {

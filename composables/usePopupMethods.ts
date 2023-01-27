@@ -17,12 +17,13 @@ export enum EVENTS_NAMES {
 }
 
 type CloseParams = {
-  returnData?: any
+  returnData?: unknown
   handlePending?: boolean
 }
 
 type GuardParams = {
   callback?: ((...args: unknown[]) => void) | null
+  onClose?: ((...args: unknown[]) => void) | null
 }
 
 type ActionParams = {
@@ -30,6 +31,7 @@ type ActionParams = {
   params?: object
   events?: object
   callback?: ((...args: unknown[]) => void) | null
+  onClose?: ((...args: unknown[]) => void) | null
   handleGuard?: boolean
 }
 
@@ -46,12 +48,15 @@ export const usePopupMethods = () => {
   const POPUP_CLOSE_CURRENT = ({ handlePending = false, returnData }: CloseParams = {}): void => {
     if (!pendingPopup.component || !handlePending) {
       setCurrentPopup()
+      if (currentPopup.onClose) {
+        currentPopup.onClose(returnData)
+      }
     } else {
       const { callback, ...rest } = pendingPopup
       setCurrentPopup({ ...rest })
       setPendingPopup()
       if (callback) {
-        callback(returnData, rest.params)
+        callback(rest.params)
       }
     }
   }
@@ -70,10 +75,11 @@ export const usePopupMethods = () => {
     params = {},
     events = {},
     callback = null,
+    onClose = null,
     handleGuard = false,
   }: ActionParams): void => {
     const { isLoggedIn } = useUserStore()
-    const popup = { component: popupsComponents.action[name], params, events }
+    const popup = { component: popupsComponents.action[name], params, events, onClose }
 
     if (handleGuard && !isLoggedIn) {
       setPendingPopup({ ...popup, callback })

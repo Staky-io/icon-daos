@@ -282,8 +282,9 @@ const DISPATCH_DEPLOY = async (): Promise<void> => {
 }
 
 const closePopup = (): void => {
+  const returnData = ACTION_DEPLOYTOKEN.tx
   RESET_DEPLOY()
-  emit(events.POPUP_CLOSE, { returnData: ACTION_DEPLOYTOKEN.tx })
+  emit(events.POPUP_CLOSE, { returnData })
 }
 
 watch(() => bus.value.get(events.ICONEX_CANCEL), () => {

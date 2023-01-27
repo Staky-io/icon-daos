@@ -46,6 +46,7 @@
 
 <script setup lang="ts">
 const { notify } = useNotificationToast()
+
 type Props = {
   stepData?: string
 }
@@ -53,8 +54,7 @@ type Props = {
 const props = defineProps<Props>()
 const { emit, events } = useEventsBus()
 
-const models = reactive<{ token: string, address: string, id: string }>({ token: '', address: '', id: '' })
-if (props.stepData) models.token = props.stepData
+const models = reactive<{ token: string, address: string, id: string }>({ token: props.stepData || '', address: '', id: '' })
 
 const onDeployAgora = (): void => {
   emit(events.POPUP_ACTION, { name: 'DeployToken', params: { type: 'agora' }, handleGuard: true })
