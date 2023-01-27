@@ -55,13 +55,29 @@ const props = defineProps<Props>()
 const { emit, events } = useEventsBus()
 
 const models = reactive<{ token: string, address: string, id: string }>({ token: props.stepData || '', address: '', id: '' })
+const agoraScore = <string>('')
 
 const onDeployAgora = (): void => {
-  emit(events.POPUP_ACTION, { name: 'DeployToken', params: { type: 'agora' }, handleGuard: true })
+  emit(events.POPUP_ACTION, {
+    name: 'DeployToken',
+    params: { type: 'agora' },
+    handleGuard: true,
+    callback: (returnData) => {
+      console.log(returnData.scoreAddress)
+      agoraScore.value = returnData.scoreAddress
+    },
+  })
 }
 
 const onSetupAgora = (): void => {
-  if (models.token !== '') {
+  if(agoraScore == ''){
+    notify.error({
+      title: 'Warning',
+      message: 'You need to deploy an Agora SCORE first',
+      timeout: 5000,
+    })
+  }
+  else if (models.token !== '') {
     // emit(events.POPUP_ACTION, { name: 'DeployToken', params: { type: 'agora' }, handleGuard: true })
   } else {
     notify.error({
