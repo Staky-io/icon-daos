@@ -3,11 +3,11 @@
     <template #header>
       <h2>
         <client-only>
-          <template v-if="ACTION_DEPLOYTOKEN.tx.hash">
-            Your contract have been deployed!
+          <template v-if="ACTION_SETAGORA.tx.hash">
+            Your Agora contract is set!
           </template>
-          <template v-else-if="ACTION_DEPLOYTOKEN.isLoading || ACTION_DEPLOYTOKEN.isWaiting">
-            Deploying...
+          <template v-else-if="ACTION_SETAGORA.isLoading || ACTION_SETAGORA.isWaiting">
+            Setting...
           </template>
         </client-only>
       </h2>
@@ -19,12 +19,12 @@
       >
         <!-- SUCCESS -->
         <div
-          v-if="ACTION_DEPLOYTOKEN.tx.hash"
+          v-if="ACTION_SETAGORA.tx.hash"
           key="success"
           class="grid gap-20 typo-paragraph"
         >
           <span>
-            The contract has been deployed at this address : {{ ACTION_DEPLOYTOKEN.tx.scoreAddress }}
+            You can now deploy Agora UI
 
           </span>
           <ControlsButtonAction @click="closePopup">
@@ -33,12 +33,12 @@
         </div>
         <!-- LOADING -->
         <div
-          v-else-if="ACTION_DEPLOYTOKEN.isLoading || ACTION_DEPLOYTOKEN.isWaiting"
+          v-else-if="ACTION_SETAGORA.isLoading || ACTION_SETAGORA.isWaiting"
           key="loading"
           class="grid gap-20 typo-paragraph"
         >
           <span>
-            The contract is being deployed. Please wait for few seconds.
+            Agora is being set. Please wait for few seconds.
           </span>
         </div>
       </transition>
@@ -56,7 +56,7 @@ import soulbound from '~/static/contract_hash/soulbound'
 import agora from '~/static/contract_hash/agora'
 
 const { IconConverter, IconBuilder } = IconService
-const { DeployTransactionBuilder } = IconBuilder
+const { CallTransactionBuilder } = IconBuilder
 
 type ActionData = {
   type: string
@@ -89,13 +89,15 @@ const { address, wallet } = storeToRefs(useUserStore())
 
 const nid = iconNetwork === 'testnet' ? '2' : '1'
 type Props = {
-  type: string
+  address: string,
+  agora:string,
+  tokenId: string
 }
 
 const props = defineProps<Props>()
 
 const isGlobalListening = ref<boolean>(false)
-const ACTION_DEPLOYTOKEN = reactive<ActionData>({
+const ACTION_SETAGORA = reactive<ActionData>({
   type: 'RPC',
   tx: {},
   query: {},
@@ -105,26 +107,22 @@ const ACTION_DEPLOYTOKEN = reactive<ActionData>({
   isSuccess: false,
 })
 
-let content
-
-if (props.type === 'soulbound') {
-  content = soulbound
-} else if (props.type === 'agora') {
-  content = agora
-}
-
-const getDeployQuery = async (): Promise<Query> => {
+const getSetQuery = async (): Promise<Query> => {
   try {
-    const tx = new DeployTransactionBuilder()
+    const tx = new CallTransactionBuilder()
       .from(address.value)
-      .to('cx0000000000000000000000000000000000000000')
+      .to(props.agora)
       .stepLimit(IconConverter.toBigNumber('3000000000'))
       .nid(IconConverter.toBigNumber(nid))
       .nonce(IconConverter.toBigNumber('1'))
       .version(IconConverter.toBigNumber('3'))
       .timestamp((new Date()).getTime() * 1000)
-      .contentType('application/java')
-      .content(content)
+      .method('setGovernanceToken')
+      .params({
+        _address: props.address,
+        _type: 'irc-31',
+        _id: props.tokenId,
+      })
       .build()
 
     return {
@@ -143,7 +141,7 @@ const getDeployQuery = async (): Promise<Query> => {
   }
 }
 
-const makeDeployQuery = async (hash: string): Promise<{ block: BlockData, tx: Awaited<ReturnType<typeof getTxResult>> }> => new Promise((resolve, reject) => {
+const makeSetQuery = async (hash: string): Promise<{ block: BlockData, tx: Awaited<ReturnType<typeof getTxResult>> }> => new Promise((resolve, reject) => {
   getTxResult(hash)
     .then((tx) => {
       if (tx.status === 1) {
@@ -158,30 +156,30 @@ const makeDeployQuery = async (hash: string): Promise<{ block: BlockData, tx: Aw
     })
     .catch(() => {
       setTimeout(() => {
-        resolve(makeDeployQuery(hash))
+        resolve(makeSetQuery(hash))
       }, 2000)
     })
 })
 
-const RESET_DEPLOY = (): void => {
-  ACTION_DEPLOYTOKEN.tx = {}
-  ACTION_DEPLOYTOKEN.query = {}
-  ACTION_DEPLOYTOKEN.isListening = false
-  ACTION_DEPLOYTOKEN.isWaiting = false
-  ACTION_DEPLOYTOKEN.isLoading = false
-  ACTION_DEPLOYTOKEN.isSuccess = false
+const RESET_SET = (): void => {
+  ACTION_SETAGORA.tx = {}
+  ACTION_SETAGORA.query = {}
+  ACTION_SETAGORA.isListening = false
+  ACTION_SETAGORA.isWaiting = false
+  ACTION_SETAGORA.isLoading = false
+  ACTION_SETAGORA.isSuccess = false
 }
 
 const RESET_LISTENER = (): void => {
   isGlobalListening.value = false
-  RESET_DEPLOY()
+  RESET_SET()
 }
 
-const CALLBACK_DEPLOY = async (hash: string, scoreAddress: string): Promise<void> => {
+const CALLBACK_SET = async (hash: string, scoreAddress: string): Promise<void> => {
   try {
-    RESET_DEPLOY()
-    ACTION_DEPLOYTOKEN.tx = { hash, scoreAddress }
-    ACTION_DEPLOYTOKEN.isSuccess = true
+    RESET_SET()
+    ACTION_SETAGORA.tx = { hash, scoreAddress }
+    ACTION_SETAGORA.isSuccess = true
     // scoreAddress
   } catch (error) {
     notify.error({
@@ -192,14 +190,14 @@ const CALLBACK_DEPLOY = async (hash: string, scoreAddress: string): Promise<void
   }
 }
 
-const COMPLETE_DEPLOY = async (hash: string): Promise<void> => {
+const COMPLETE_SET = async (hash: string): Promise<void> => {
   try {
-    ACTION_DEPLOYTOKEN.isWaiting = false
-    ACTION_DEPLOYTOKEN.isLoading = true
-    const { tx } = await makeDeployQuery(hash)
-    CALLBACK_DEPLOY(tx.txHash, tx.scoreAddress)
+    ACTION_SETAGORA.isWaiting = false
+    ACTION_SETAGORA.isLoading = true
+    const { tx } = await makeSetQuery(hash)
+    CALLBACK_SET(tx.txHash, tx.scoreAddress)
   } catch (error) {
-    RESET_DEPLOY()
+    RESET_SET()
 
     notify.error({
       title: 'Error',
@@ -221,9 +219,9 @@ const HANDLE_RPC = async (payload): Promise<void> => {
     })
   } else if (result) {
     isGlobalListening.value = false
-    if (ACTION_DEPLOYTOKEN.type === 'RPC' && ACTION_DEPLOYTOKEN.isListening) {
-      ACTION_DEPLOYTOKEN.isListening = false
-      await COMPLETE_DEPLOY(result)
+    if (ACTION_SETAGORA.type === 'RPC' && ACTION_SETAGORA.isListening) {
+      ACTION_SETAGORA.isListening = false
+      await COMPLETE_SET(result)
     }
   }
 }
@@ -267,23 +265,23 @@ const TX_ROUTER = async ({ type, payload }: { type: string, payload: Query }): P
   }
 }
 
-const DISPATCH_DEPLOY = async (): Promise<void> => {
-  ACTION_DEPLOYTOKEN.query = {
+const DISPATCH_SET = async (): Promise<void> => {
+  ACTION_SETAGORA.query = {
     address: address.value,
   }
 
-  const query = await getDeployQuery()
+  const query = await getSetQuery()
 
   isGlobalListening.value = true
-  ACTION_DEPLOYTOKEN.isWaiting = true
-  ACTION_DEPLOYTOKEN.isListening = true
+  ACTION_SETAGORA.isWaiting = true
+  ACTION_SETAGORA.isListening = true
 
   TX_ROUTER({ type: 'REQUEST_JSON-RPC', payload: query })
 }
 
 const closePopup = (): void => {
-  const returnData = ACTION_DEPLOYTOKEN.tx
-  RESET_DEPLOY()
+  const returnData = ACTION_SETAGORA.tx
+  RESET_SET()
   emit(events.POPUP_CLOSE, { returnData })
 }
 
@@ -295,6 +293,6 @@ watch(() => bus.value.get(events.ICONEX_CANCEL), () => {
 watch(() => bus.value.get(events.ICONEX_RPC), HANDLE_RPC)
 
 onMounted(async () => {
-  await DISPATCH_DEPLOY()
+  await DISPATCH_SET()
 })
 </script>

@@ -50,19 +50,21 @@ const { notify } = useNotificationToast()
 type Props = {
   stepData?: string
 }
-
+type Emits = {
+  (event: 'updateStep', parameter: { step: NextStep, data: string }): void
+}
 const props = defineProps<Props>()
 const { emit, events } = useEventsBus()
-
-const models = reactive<{ token: string, address: string, id: string }>({ token: props.stepData || '', address: '', id: '' })
-const agoraScore = <string>('')
+const emitStep = defineEmits<Emits>()
+const models = reactive<{ token: string, address: string, id: string }>({ token: '', address: props.stepData || '', id: '' })
+const agoraScore = ref<string>('')
 
 const onDeployAgora = (): void => {
   emit(events.POPUP_ACTION, {
     name: 'DeployToken',
     params: { type: 'agora' },
     handleGuard: true,
-    callback: (returnData) => {
+    onClose: (returnData) => {
       console.log(returnData.scoreAddress)
       agoraScore.value = returnData.scoreAddress
     },
@@ -70,19 +72,25 @@ const onDeployAgora = (): void => {
 }
 
 const onSetupAgora = (): void => {
-  if(agoraScore == ''){
+  if (agoraScore.value == '') {
     notify.error({
       title: 'Warning',
       message: 'You need to deploy an Agora SCORE first',
       timeout: 5000,
     })
-  }
-  else if (models.token !== '') {
-    // emit(events.POPUP_ACTION, { name: 'DeployToken', params: { type: 'agora' }, handleGuard: true })
+  } else if (models.token !== '' || models.address !== '') {
+    emit(events.POPUP_ACTION, {
+      name: 'SetAgora',
+      params: { address: models.address, agora: agoraScore.value, tokenId: models.id },
+      handleGuard: true,
+      onClose: (returnData) => {
+        emitStep('updateStep', { step: 'StepFinale', data: returnData.scoreAddress })
+      },
+    })
   } else {
     notify.error({
       title: 'Warning',
-      message: 'You need to select a token type, address',
+      message: 'You need to select a token type and address',
       timeout: 5000,
     })
   }

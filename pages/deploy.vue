@@ -15,12 +15,14 @@ enum STEPS {
   DECLARE_TOKEN = 'StepDeclareToken',
   DEPLOY_TOKEN = 'StepDeployToken',
   DEPLOY_AGORA = 'StepDeployAgora',
+  DEPLOY_FINALE = 'StepFinale',
 }
 
 const steps = {
   StepDeclareToken: markRaw(defineAsyncComponent(() => import('@/components/displays/deploy/StepDeclareToken.vue'))),
   StepDeployToken: markRaw(defineAsyncComponent(() => import('@/components/displays/deploy/StepDeployToken.vue'))),
   StepDeployAgora: markRaw(defineAsyncComponent(() => import('@/components/displays/deploy/StepDeployAgora.vue'))),
+  StepFinale: markRaw(defineAsyncComponent(() => import('@/components/displays/deploy/StepFinale.vue'))),
 }
 
 const currentStep = ref<STEPS>(STEPS.DECLARE_TOKEN)

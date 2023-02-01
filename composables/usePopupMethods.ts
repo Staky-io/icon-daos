@@ -3,6 +3,7 @@ import { useUserStore } from '@/stores/user'
 const popupsComponents = {
   action: {
     DeployToken: markRaw(defineAsyncComponent(() => import('@/components/partials/popup/action/DeployToken.vue'))),
+    SetAgora: markRaw(defineAsyncComponent(() => import('@/components/partials/popup/action/SetAgora.vue'))),
   },
   guard: {
     Connect: markRaw(defineAsyncComponent(() => import('@/components/partials/popup/guard/Connect.vue'))),
