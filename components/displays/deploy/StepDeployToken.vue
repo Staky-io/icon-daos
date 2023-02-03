@@ -52,7 +52,9 @@ const onDeployToken = (): void => {
       params: { type: 'soulbound' },
       handleGuard: true,
       onClose: (returnData) => {
-        emitStep('updateStep', { step: 'StepDeployAgora', data: returnData.scoreAddress })
+        if (typeof returnData === 'object' && returnData !== null && 'scoreAddress' in returnData && typeof returnData.scoreAddress === 'string') {
+          emitStep('updateStep', { step: 'StepDeployAgora', data: returnData.scoreAddress })
+        }
       },
     })
   } else {
