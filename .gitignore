@@ -63,7 +63,6 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
-
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 
@@ -91,3 +90,6 @@ dist
 
 # pwa
 sw.*
+
+# Vercel
+.vercel
