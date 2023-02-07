@@ -52,8 +52,8 @@ import { storeToRefs } from 'pinia'
 import type { BlockData } from '@/composables/useScoreService'
 import { useLedgerStore } from '@/stores/ledger'
 import { useUserStore } from '@/stores/user'
-import soulbound from '~/static/contract_hash/soulbound'
-import agora from '~/static/contract_hash/agora'
+import soulbound from '@/public/contract_hash/soulbound'
+import agora from '@/public/contract_hash/agora'
 
 const { IconConverter, IconBuilder } = IconService
 const { CallTransactionBuilder } = IconBuilder

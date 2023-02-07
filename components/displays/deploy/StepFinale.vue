@@ -12,9 +12,16 @@
 <script setup lang="ts">
 type NextStep = 'StepDeployToken' | 'StepDeployAgora'
 
+type Props = {
+  stepData?: string
+}
+
 type Emits = {
   (event: 'updateStep', parameter: { step: NextStep }): void
 }
 
 const emit = defineEmits<Emits>()
+withDefaults(defineProps<Props>(), {
+  stepData: '',
+})
 </script>

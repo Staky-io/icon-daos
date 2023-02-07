@@ -3,6 +3,9 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "isolatedModules": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": [
+      "webpack-env"
+    ]
   }
 }

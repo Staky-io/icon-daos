@@ -30,6 +30,6 @@ const stepData = ref<string>('')
 
 const updateStep = ({ step, data }: { step: STEPS, data: string }): void => {
   currentStep.value = step
-  stepData.value = data
+  stepData.value = data || ''
 }
 </script>

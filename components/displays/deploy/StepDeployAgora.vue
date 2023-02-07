@@ -47,15 +47,23 @@
 <script setup lang="ts">
 const { notify } = useNotificationToast()
 
+type NextStep = 'StepFinale'
+
 type Props = {
   stepData?: string
 }
+
 type Emits = {
   (event: 'updateStep', parameter: { step: NextStep, data: string }): void
 }
-const props = defineProps<Props>()
-const { emit, events } = useEventsBus()
+
 const emitStep = defineEmits<Emits>()
+const props = withDefaults(defineProps<Props>(), {
+  stepData: '',
+})
+
+const { emit, events } = useEventsBus()
+
 const models = reactive<{ token: string, address: string, id: string }>({ token: '', address: props.stepData || '', id: '' })
 const agoraScore = ref<string>('')
 
@@ -65,14 +73,16 @@ const onDeployAgora = (): void => {
     params: { type: 'agora' },
     handleGuard: true,
     onClose: (returnData) => {
-      console.log(returnData.scoreAddress)
-      agoraScore.value = returnData.scoreAddress
+      if (typeof returnData === 'object' && returnData !== null && 'scoreAddress' in returnData && typeof returnData.scoreAddress === 'string') {
+        console.log(returnData.scoreAddress)
+        agoraScore.value = returnData.scoreAddress
+      }
     },
   })
 }
 
 const onSetupAgora = (): void => {
-  if (agoraScore.value == '') {
+  if (agoraScore.value === '') {
     notify.error({
       title: 'Warning',
       message: 'You need to deploy an Agora SCORE first',
@@ -84,7 +94,9 @@ const onSetupAgora = (): void => {
       params: { address: models.address, agora: agoraScore.value, tokenId: models.id },
       handleGuard: true,
       onClose: (returnData) => {
-        emitStep('updateStep', { step: 'StepFinale', data: returnData.scoreAddress })
+        if (typeof returnData === 'object' && returnData !== null && 'scoreAddress' in returnData && typeof returnData.scoreAddress === 'string') {
+          emitStep('updateStep', { step: 'StepFinale', data: returnData.scoreAddress })
+        }
       },
     })
   } else {

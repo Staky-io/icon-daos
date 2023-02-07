@@ -36,12 +36,21 @@
 <script setup lang="ts">
 type NextStep = 'StepDeployAgora'
 
+type Props = {
+  stepData?: string
+}
+
 type Emits = {
   (event: 'updateStep', parameter: { step: NextStep, data: string }): void
 }
+
+const emitStep = defineEmits<Emits>()
+withDefaults(defineProps<Props>(), {
+  stepData: '',
+})
+
 const { emit, events } = useEventsBus()
 const { notify } = useNotificationToast()
-const emitStep = defineEmits<Emits>()
 
 const models = reactive<{ token: string }>({ token: '' })
 
