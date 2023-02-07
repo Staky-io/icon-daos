@@ -94,7 +94,8 @@ const onSetupAgora = (): void => {
       params: { address: models.address, agora: agoraScore.value, tokenId: models.id },
       handleGuard: true,
       onClose: (returnData) => {
-        if (typeof returnData === 'object' && returnData !== null && 'scoreAddress' in returnData && typeof returnData.scoreAddress === 'string') {
+        console.log('close')
+        if (typeof returnData === 'object' && returnData !== null) {
           emitStep('updateStep', { step: 'StepFinale', data: returnData.scoreAddress })
         }
       },

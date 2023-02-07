@@ -4,7 +4,11 @@
       Congratulations! 🎉
     </h1>
     <p class="typo-text-large text-grey-100">
-      You have deployed the on-chain infrastructure for your DAO 🚀 The next step consist in deploying the user interface for Agora, you can do so by following the instructions there: https://github.com/Staky-io/agora
+      You have deployed the on-chain infrastructure for your DAO 🚀 The next step consist in deploying the user interface for Agora, you can do so by following the instructions there: <a
+        target="blank"
+        class="underline"
+        href="https://github.com/Staky-io/agora"
+      >https://github.com/Staky-io/agora</a>
     </p>
   </div>
 </template>
