@@ -34,8 +34,11 @@
 </template>
 
 <script setup lang="ts">
-type NextStep = 'StepDeployAgora'
+import { useUserStore } from '@/stores/user'
 
+type NextStep = 'StepDeployAgora'
+const userStore = useUserStore()
+const { setUserContracts } = userStore
 type Props = {
   stepData?: string
 }
@@ -62,6 +65,7 @@ const onDeployToken = (): void => {
       handleGuard: true,
       onClose: (returnData) => {
         if (typeof returnData === 'object' && returnData !== null && 'scoreAddress' in returnData && typeof returnData.scoreAddress === 'string') {
+          setUserContracts('token', returnData.scoreAddress)
           emitStep('updateStep', { step: 'StepDeployAgora', data: returnData.scoreAddress })
         }
       },

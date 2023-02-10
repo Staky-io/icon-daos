@@ -7,6 +7,16 @@ export const useUserStore = defineStore('user-store', () => {
   const address = ref<string>('')
   const wallet = ref<string>('')
 
+  type UserContracts = {
+    token: string
+    agora: string
+  }
+
+  const userContracts = reactive<UserContracts>({
+    token: '',
+    agora: '',
+  })
+
   // Getters
   const truncatedAddress = computed<string>(() => (address.value ? truncate(address.value) : ''))
 
@@ -28,18 +38,22 @@ export const useUserStore = defineStore('user-store', () => {
     address.value = ''
     wallet.value = ''
   }
+  const setUserContracts = async (key: string, value:string): Promise<void> => {
+    userContracts[key] = value
+  }
 
   return {
     // States
     isLoggedIn,
     address,
     wallet,
-
+    userContracts,
     // Getters
     truncatedAddress,
 
     // Actions
     loginUser,
     logoutUser,
+    setUserContracts,
   }
 }, { persist: true })

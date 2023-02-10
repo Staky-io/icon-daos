@@ -72,7 +72,7 @@ export const useScoreService = () => {
   const { scoreAddress } = useRuntimeConfig()
   const ledgerStore = useLedgerStore()
   const iconNetwork = ledgerStore.network
-  const isTestnet: boolean = iconNetwork === 'testnet'
+  const isTestnet: boolean = iconNetwork === 'Lisbon'
   const url = isTestnet ? 'https://lisbon.net.solidwallet.io/' : 'https://ctz.solidwallet.io/'
   const debug = isTestnet ? 'https://lisbon.net.solidwallet.io/api/v3d' : 'https://ctz.solidwallet.io/api/debug/v3'
   const nid = isTestnet ? '2' : '1'

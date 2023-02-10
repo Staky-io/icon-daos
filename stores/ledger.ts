@@ -240,7 +240,6 @@ export const useLedgerStore = defineStore('ledger-store', () => {
       })
   }
   const selectNetwork = (net:string) => {
-    console.log(net)
     network.value = net
   }
 

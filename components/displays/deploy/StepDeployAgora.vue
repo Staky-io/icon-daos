@@ -16,7 +16,8 @@
       Setup Agora contracts
     </h1>
     <p class="typo-text-large text-grey-100">
-      Once Agora is deployed, you can set it to track balances from your token contract. <span v-if="models.token == 'Sould Bounds NFT'">For a Soulbound NFT, you will need to specify the tokenId of the token that holds governance power.</span>
+      Once Agora is deployed, you can set it to track balances from your token contract.
+      <span v-if="models.token == 'Sould Bounds NFT'">For a Soulbound NFT, you will need to specify the tokenId of the token that holds governance power. You can set tokenId as 1 if  are not sure of the tokenId to choose.</span>
     </p>
   </div>
   <ControlsFormSelect
@@ -45,10 +46,13 @@
 </template>
 
 <script setup lang="ts">
+import { useUserStore } from '@/stores/user'
+
 const { notify } = useNotificationToast()
 
 type NextStep = 'StepFinale'
-
+const userStore = useUserStore()
+const { setUserContracts } = userStore
 type Props = {
   stepData?: string
 }
@@ -64,7 +68,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { emit, events } = useEventsBus()
 
-const models = reactive<{ token: string, address: string, id: string }>({ token: '', address: props.stepData || '', id: '' })
+const models = reactive<{ token: string, address: string, id: string }>({ token: '', address: props.stepData || '', id: '1' })
 const agoraScore = ref<string>('')
 
 const onDeployAgora = (): void => {
@@ -75,6 +79,7 @@ const onDeployAgora = (): void => {
     onClose: (returnData) => {
       if (typeof returnData === 'object' && returnData !== null && 'scoreAddress' in returnData && typeof returnData.scoreAddress === 'string') {
         console.log(returnData.scoreAddress)
+        setUserContracts('agora', returnData.scoreAddress)
         agoraScore.value = returnData.scoreAddress
       }
     },
