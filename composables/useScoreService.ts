@@ -2,6 +2,7 @@
 import axios from 'axios'
 import IconService from 'icon-sdk-js'
 import BigNumber from 'bignumber.js'
+import { useLedgerStore } from '@/stores/ledger'
 
 type Hash = string | BigNumber | number
 
@@ -68,8 +69,9 @@ export type TxResult = {
 }
 
 export const useScoreService = () => {
-  const { iconNetwork, scoreAddress } = useRuntimeConfig()
-
+  const { scoreAddress } = useRuntimeConfig()
+  const ledgerStore = useLedgerStore()
+  const iconNetwork = ledgerStore.network
   const isTestnet: boolean = iconNetwork === 'testnet'
   const url = isTestnet ? 'https://lisbon.net.solidwallet.io/' : 'https://ctz.solidwallet.io/'
   const debug = isTestnet ? 'https://lisbon.net.solidwallet.io/api/v3d' : 'https://ctz.solidwallet.io/api/debug/v3'

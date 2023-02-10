@@ -75,7 +75,7 @@ type Query = {
   id: number
 }
 
-const { iconNetwork } = useRuntimeConfig()
+const { network } = storeToRefs(useLedgerStore())
 const route = useRoute()
 const uid = route?.params?.uid
 
@@ -87,7 +87,7 @@ const { ICONEX_HANDLE_CANCEL } = useIconexListener()
 const { dipsatchLedger } = useLedgerStore()
 const { address, wallet } = storeToRefs(useUserStore())
 
-const nid = iconNetwork === 'testnet' ? '2' : '1'
+const nid = network.value === 'Lisbon' ? '2' : '1'
 type Props = {
   address: string,
   agora:string,

@@ -7,8 +7,8 @@ import Icx from '@/assets/scripts/libs/hw-app-icx/Icx'
 import { serializeTransaction } from '@/assets/scripts/helpers'
 import { useUserStore } from '@/stores/user'
 
-const { iconNetwork } = useRuntimeConfig()
-const isTestnet = iconNetwork === 'testnet'
+const network = ref<string>('Lisbon')
+const isTestnet = network.value === 'Lisbon'
 const url = isTestnet ? 'https://lisbon.net.solidwallet.io/' : 'https://ctz.solidwallet.io/'
 const nid = isTestnet ? '2' : '1'
 const provider = new IconService.HttpProvider(`${url}api/v3`)
@@ -38,6 +38,7 @@ export const useLedgerStore = defineStore('ledger-store', () => {
 
   // States
   const addressPath = ref<string>('')
+
   const ledgerAddresses = ref<LedgerAddressesList>([])
   const ledgerStatus = reactive<LedgerStatus>({
     isFetching: true,
@@ -238,16 +239,22 @@ export const useLedgerStore = defineStore('ledger-store', () => {
         ledgerStatus.isFetching = false
       })
   }
+  const selectNetwork = (net:string) => {
+    console.log(net)
+    network.value = net
+  }
 
   return {
     // States
     addressPath,
     ledgerAddresses,
     ledgerStatus,
+    network,
 
     // Actions
     dipsatchLedger,
     selectLedgerAddress,
     setLedgerPage,
+    selectNetwork,
   }
 }, { persist: true })
