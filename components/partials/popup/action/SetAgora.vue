@@ -24,7 +24,7 @@
           class="grid gap-20 typo-paragraph"
         >
           <span>
-            You can now deploy Agora UI
+            You can now deploy the Agora UI
 
           </span>
           <ControlsButtonAction @click="closePopup">
@@ -109,6 +109,12 @@ const ACTION_SETAGORA = reactive<ActionData>({
 
 const getSetQuery = async (): Promise<Query> => {
   try {
+    const params = {
+      _address: props.address,
+      _type: props.tokenId ? 'irc-31' : 'irc-2',
+    }
+    if (props.tokenId) params._id = props.tokenId
+
     const tx = new CallTransactionBuilder()
       .from(address.value)
       .to(props.agora)
@@ -118,11 +124,7 @@ const getSetQuery = async (): Promise<Query> => {
       .version(IconConverter.toBigNumber('3'))
       .timestamp((new Date()).getTime() * 1000)
       .method('setGovernanceToken')
-      .params({
-        _address: props.address,
-        _type: 'irc-31',
-        _id: props.tokenId,
-      })
+      .params(params)
       .build()
 
     return {

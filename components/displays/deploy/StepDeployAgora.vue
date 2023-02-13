@@ -24,7 +24,7 @@
     v-model="models.token"
     label="Select token type"
     placeholder="Select a token"
-    :options="['Sould Bounds NFT']"
+    :options="['IRC2 Token','Sould Bounds NFT','Staked IRC2 token']"
   />
   <div class="grid s:grid-cols-2 gap-16">
     <ControlsFormInput
@@ -33,7 +33,7 @@
       placeholder="cx..."
     />
     <ControlsFormInput
-      v-if="models.token == 'Sould Bounds NFT'"
+      v-if="models.token == 'Sould Bounds NFT' || models.token == 'Staked IRC2 token'"
       v-model="models.id"
       label="Id"
       placeholder="1"
@@ -68,7 +68,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { emit, events } = useEventsBus()
 
-const models = reactive<{ token: string, address: string, id: string }>({ token: '', address: props.stepData || '', id: '1' })
+const models = reactive<{ token: string, address: string, id: string }>({ token: '', address: props.stepData || '', id: null })
 const agoraScore = ref<string>('')
 
 const onDeployAgora = (): void => {
@@ -93,10 +93,18 @@ const onSetupAgora = (): void => {
       message: 'You need to deploy an Agora SCORE first',
       timeout: 5000,
     })
+  } else if (models.token === '') {
+    notify.error({
+      title: 'Warning',
+      message: 'You need to select a token type',
+      timeout: 5000,
+    })
   } else if (models.token !== '' || models.address !== '') {
+    const params = { address: models.address, agora: agoraScore.value, tokenId: null }
+    if (models.id) params.tokenId = models.id
     emit(events.POPUP_ACTION, {
       name: 'SetAgora',
-      params: { address: models.address, agora: agoraScore.value, tokenId: models.id },
+      params,
       handleGuard: true,
       onClose: (returnData) => {
         console.log('close')
