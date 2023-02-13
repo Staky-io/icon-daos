@@ -35,6 +35,7 @@
 type Link = { text: string, url: string }
 
 const links = ref<Link[]>([
+  { text: 'Deploy tutorial', url: 'https://medium.com/staky-io/how-to-set-up-a-dao-on-icon-145cd47de1cf/' },
   { text: 'ICON website', url: 'https://icon.community/' },
   { text: 'ICON docs', url: 'https://docs.icon.community' },
   { text: 'Why $ICX?', url: 'https://whyicx.com/' },
