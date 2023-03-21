@@ -11,9 +11,9 @@
     v-model="models.token"
     label="Select token type"
     placeholder="Select a token"
-    :options="['Sould Bounds NFT']"
+    :options="['Soulbounds NFT']"
   />
-  <span v-if="models.token == 'Sould Bounds NFT'">
+  <span v-if="models.token == 'Soulbounds NFT'">
     SoulBounds NFT are untransferable NFT tokens. Soulbound tokens cannot be bought and sold and are not designed to have market value. Instead, they can be issued by individuals or by another entity to symbolize an accomplishment.
   </span>
   <!-- <div class="grid s:grid-cols-2 gap-16">

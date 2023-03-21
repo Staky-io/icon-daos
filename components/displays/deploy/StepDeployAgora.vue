@@ -17,14 +17,14 @@
     </h1>
     <p class="typo-text-large text-grey-100">
       Once Agora is deployed, you can set it to track balances from your token contract.
-      <span v-if="models.token == 'Sould Bounds NFT'">For a Soulbound NFT, you will need to specify the tokenId of the token that holds governance power. You can set tokenId as 1 if  are not sure of the tokenId to choose.</span>
+      <span v-if="models.token == 'Soulbounds NFT'">For a Soulbound NFT, you will need to specify the tokenId of the token that holds governance power. You can set tokenId as 1 if  are not sure of the tokenId to choose.</span>
     </p>
   </div>
   <ControlsFormSelect
     v-model="models.token"
     label="Select token type"
     placeholder="Select a token"
-    :options="['IRC2 Token','Sould Bounds NFT','Staked IRC2 token']"
+    :options="['IRC2 Token','Soulbounds NFT','Staked IRC2 token']"
   />
   <div class="grid s:grid-cols-2 gap-16">
     <ControlsFormInput
@@ -33,7 +33,7 @@
       placeholder="cx..."
     />
     <ControlsFormInput
-      v-if="models.token == 'Sould Bounds NFT' || models.token == 'Staked IRC2 token'"
+      v-if="models.token == 'Soulbounds NFT' || models.token == 'Staked IRC2 token'"
       v-model="models.id"
       label="Id"
       placeholder="1"
@@ -74,7 +74,7 @@ const agoraScore = ref<string>('')
 const onDeployAgora = (): void => {
   emit(events.POPUP_ACTION, {
     name: 'DeployToken',
-    params: { type: 'agora' },
+    params: { type: 'agora', variant: models.token },
     handleGuard: true,
     onClose: (returnData) => {
       if (typeof returnData === 'object' && returnData !== null && 'scoreAddress' in returnData && typeof returnData.scoreAddress === 'string') {

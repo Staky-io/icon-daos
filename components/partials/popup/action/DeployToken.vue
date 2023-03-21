@@ -54,6 +54,7 @@ import { useLedgerStore } from '@/stores/ledger'
 import { useUserStore } from '@/stores/user'
 import soulbound from '@/public/contract_hash/soulbound'
 import agora from '@/public/contract_hash/agora'
+import agoraSoulbound from '~/public/contract_hash/agora-soulbound'
 
 const { IconConverter, IconBuilder } = IconService
 const { DeployTransactionBuilder } = IconBuilder
@@ -90,7 +91,8 @@ const { address, wallet } = storeToRefs(useUserStore())
 
 const nid = network.value === 'Lisbon' ? '2' : '1'
 type Props = {
-  type: string
+  type: string,
+  variant?: string
 }
 
 const props = defineProps<Props>()
@@ -111,7 +113,13 @@ let content
 if (props.type === 'soulbound') {
   content = soulbound
 } else if (props.type === 'agora') {
-  content = agora
+  if (props.variant === 'Soulbounds NFT') {
+    content = agoraSoulbound
+    console.log('variant')
+  } else {
+    content = agora
+    console.log('classic')
+  }
 }
 
 const getDeployQuery = async (): Promise<Query> => {
