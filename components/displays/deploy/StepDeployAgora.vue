@@ -36,7 +36,7 @@
       v-if="models.token == 'Soulbounds NFT' || models.token == 'Staked IRC2 token'"
       v-model="models.id"
       label="Id"
-      placeholder="1"
+      placeholder="tokenId of the soulbound NFT"
     />
   </div>
 
